@@ -15,6 +15,7 @@
 package ollamago_test
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -32,7 +33,7 @@ func TestGenerateCompletion(t *testing.T) {
 	}))
 	t.Cleanup(server.Close)
 	client := ollamago.Client{BaseURL: server.URL}
-	respChan, err := client.GenerateCompletion(ollamago.CompletionRequest{
+	respChan, err := client.GenerateCompletion(context.Background(), ollamago.CompletionRequest{
 		Model:  "test",
 		Prompt: "test prompt",
 		Stream: false,
@@ -52,7 +53,7 @@ func TestGenerateEmbeddings(t *testing.T) {
 	}))
 	t.Cleanup(server.Close)
 	client := ollamago.Client{BaseURL: server.URL}
-	resp, err := client.GenerateEmbeddings(ollamago.EmbedRequest{
+	resp, err := client.GenerateEmbeddings(context.Background(), ollamago.EmbedRequest{
 		Model: "test",
 		Input: []string{"test input"},
 	})
@@ -71,7 +72,7 @@ func TestGenerateChat(t *testing.T) {
 	}))
 	t.Cleanup(server.Close)
 	client := ollamago.Client{BaseURL: server.URL}
-	respChan, err := client.GenerateChat(ollamago.ChatRequest{
+	respChan, err := client.GenerateChat(context.Background(), ollamago.ChatRequest{
 		Model: "test",
 		Messages: []ollamago.ChatMessage{{
 			Role:    "user",
@@ -94,7 +95,7 @@ func TestListModels(t *testing.T) {
 	}))
 	t.Cleanup(server.Close)
 	client := ollamago.Client{BaseURL: server.URL}
-	resp, err := client.ListModels()
+	resp, err := client.ListModels(context.Background())
 	require.NoError(t, err)
 	require.Len(t, resp.Models, 1)
 	require.Equal(t, "model1", resp.Models[0].Name)
@@ -109,7 +110,7 @@ func TestShowModelInfo(t *testing.T) {
 	}))
 	t.Cleanup(server.Close)
 	client := ollamago.Client{BaseURL: server.URL}
-	resp, err := client.ShowModelInfo(ollamago.ShowModelRequest{
+	resp, err := client.ShowModelInfo(context.Background(), ollamago.ShowModelRequest{
 		Model: "test",
 	})
 	require.NoError(t, err)
@@ -125,7 +126,7 @@ func TestDeleteModel(t *testing.T) {
 	}))
 	t.Cleanup(server.Close)
 	client := ollamago.Client{BaseURL: server.URL}
-	err := client.DeleteModel(ollamago.DeleteModelRequest{
+	err := client.DeleteModel(context.Background(), ollamago.DeleteModelRequest{
 		Model: "test",
 	})
 	require.NoError(t, err)
@@ -139,7 +140,7 @@ func TestVersion(t *testing.T) {
 	}))
 	t.Cleanup(server.Close)
 	client := ollamago.Client{BaseURL: server.URL}
-	version, err := client.Version()
+	version, err := client.Version(context.Background())
 	require.NoError(t, err)
 	require.Equal(t, "1.0.0", version)
 }

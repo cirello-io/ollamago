@@ -16,6 +16,7 @@ package ollamago
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -58,13 +59,13 @@ func (c *Client) httpClient() *http.Client {
 	return c.HTTPClient
 }
 
-func (c *Client) GenerateCompletion(req CompletionRequest) (<-chan CompletionResponse, error) {
+func (c *Client) GenerateCompletion(ctx context.Context, req CompletionRequest) (<-chan CompletionResponse, error) {
 	url := c.baseURL() + "/api/generate"
 	jsonData, err := json.Marshal(req)
 	if err != nil {
 		return nil, fmt.Errorf("cannot prepare CompletionRequest: %w", err)
 	}
-	httpReq, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+	httpReq, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, fmt.Errorf("cannot prepare HTTP CompletionRequest: %w", err)
 	}
@@ -110,13 +111,13 @@ type EmbedResponse struct {
 	Duration   time.Duration `json:"total_duration"`
 }
 
-func (c *Client) GenerateEmbeddings(req EmbedRequest) (*EmbedResponse, error) {
+func (c *Client) GenerateEmbeddings(ctx context.Context, req EmbedRequest) (*EmbedResponse, error) {
 	url := c.baseURL() + "/api/embed"
 	jsonData, err := json.Marshal(req)
 	if err != nil {
 		return nil, fmt.Errorf("cannot prepare EmbedRequest: %w", err)
 	}
-	httpReq, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+	httpReq, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, fmt.Errorf("cannot prepare HTTP EmbedRequest: %w", err)
 	}
@@ -156,13 +157,13 @@ type ChatResponse struct {
 	Error         error         `json:"error,omitempty"`
 }
 
-func (c *Client) GenerateChat(req ChatRequest) (<-chan ChatResponse, error) {
+func (c *Client) GenerateChat(ctx context.Context, req ChatRequest) (<-chan ChatResponse, error) {
 	url := c.baseURL() + "/api/chat"
 	jsonData, err := json.Marshal(req)
 	if err != nil {
 		return nil, fmt.Errorf("cannot prepare ChatRequest: %w", err)
 	}
-	httpReq, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+	httpReq, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, fmt.Errorf("cannot prepare HTTP ChatRequest: %w", err)
 	}
@@ -207,9 +208,9 @@ type ListModelsResponse struct {
 	Models []ModelInfo `json:"models"`
 }
 
-func (c *Client) ListModels() (*ListModelsResponse, error) {
+func (c *Client) ListModels(ctx context.Context) (*ListModelsResponse, error) {
 	url := c.baseURL() + "/api/tags"
-	httpReq, err := http.NewRequest("GET", url, nil)
+	httpReq, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
 		return nil, fmt.Errorf("cannot prepare HTTP request: %w", err)
 	}
@@ -244,13 +245,13 @@ type ShowModelResponse struct {
 	} `json:"details"`
 }
 
-func (c *Client) ShowModelInfo(req ShowModelRequest) (*ShowModelResponse, error) {
+func (c *Client) ShowModelInfo(ctx context.Context, req ShowModelRequest) (*ShowModelResponse, error) {
 	url := c.baseURL() + "/api/show"
 	jsonData, err := json.Marshal(req)
 	if err != nil {
 		return nil, fmt.Errorf("cannot prepare ShowModelRequest: %w", err)
 	}
-	httpReq, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+	httpReq, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, fmt.Errorf("cannot prepare HTTP ShowModelRequest: %w", err)
 	}
@@ -274,13 +275,13 @@ type DeleteModelRequest struct {
 	Model string `json:"model"`
 }
 
-func (c *Client) DeleteModel(req DeleteModelRequest) error {
+func (c *Client) DeleteModel(ctx context.Context, req DeleteModelRequest) error {
 	url := c.baseURL() + "/api/delete"
 	jsonData, err := json.Marshal(req)
 	if err != nil {
 		return fmt.Errorf("cannot prepare DeleteModelRequest: %w", err)
 	}
-	httpReq, err := http.NewRequest("DELETE", url, bytes.NewBuffer(jsonData))
+	httpReq, err := http.NewRequestWithContext(ctx, "DELETE", url, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return fmt.Errorf("cannot prepare HTTP DeleteModelRequest: %w", err)
 	}
@@ -296,9 +297,9 @@ func (c *Client) DeleteModel(req DeleteModelRequest) error {
 	return nil
 }
 
-func (c *Client) Version() (string, error) {
+func (c *Client) Version(ctx context.Context) (string, error) {
 	url := c.baseURL() + "/api/version"
-	httpReq, err := http.NewRequest("GET", url, nil)
+	httpReq, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
 		return "", fmt.Errorf("cannot prepare HTTP request: %w", err)
 	}

@@ -15,6 +15,7 @@
 package ollamago_test
 
 import (
+	"context"
 	"fmt"
 
 	"cirello.io/ollamago"
@@ -22,7 +23,7 @@ import (
 
 func Example_Client_GenerateChat() {
 	c := ollamago.Client{}
-	resp, err := c.GenerateChat(ollamago.ChatRequest{
+	resp, err := c.GenerateChat(context.Background(), ollamago.ChatRequest{
 		Model: "llama3.2",
 		Messages: []ollamago.ChatMessage{{
 			Role:    "user",

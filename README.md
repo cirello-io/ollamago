@@ -20,7 +20,7 @@ import (
 
 func main() {
 	c := ollamago.Client{}
-	resp, err := c.GenerateChat(ollamago.ChatRequest{
+	resp, err := c.GenerateChat(context.Background(), ollamago.ChatRequest{
 		Model: "llama3.2",
 		Messages: []ollamago.ChatMessage{{
 			Role:    "user",
